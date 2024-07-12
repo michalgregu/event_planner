@@ -1,0 +1,30 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.container {
+  @include flex-center(column);
+  margin-top: 40px;
+}
+
+.boards {
+  width: 70vw;
+  padding: 20px;
+}
+
+.headerWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.boardsList {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 40px;
+  row-gap: 40px;
+}
+
+.addBtn {
+  @include button;
+}
