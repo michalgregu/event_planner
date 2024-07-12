@@ -1,5 +1,7 @@
 import { createContext, useState, useContext } from "react";
 import ReactModal from "react-modal";
+import Button from "../components/common/Button/Button";
+import PropTypes from "prop-types";
 
 const ModalContext = createContext();
 
@@ -34,11 +36,15 @@ export const ModalProvider = ({ children }) => {
       >
         <div className="modal-content">
           {modalContent}
-          <button className="modal-close" onClick={closeModal}>
+          <Button outline onClick={closeModal}>
             Close
-          </button>
+          </Button>
         </div>
       </ReactModal>
     </ModalContext.Provider>
   );
+};
+
+ModalProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

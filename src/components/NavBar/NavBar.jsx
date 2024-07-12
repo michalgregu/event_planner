@@ -1,55 +1,25 @@
-import { useEffect, useState } from "react";
-import { auth } from "../../services/firebaseConfig";
-import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut,
-  onAuthStateChanged,
-} from "firebase/auth";
-import styles from "./NavBar.module.scss";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext"; // Make sure this path is correct
+import css from "./NavBar.module.scss";
+import Button from "../../components/common/Button/Button";
 
 const NavBar = () => {
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-        navigate("/");
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [navigate]);
-
-  function handleLogout() {
-    signOut(auth);
-    setUser(null);
-  }
-
-  function handleLogin() {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        setUser(result.user);
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Error signing in:", error);
-      });
-  }
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Failed to log out", error);
+    }
+  };
 
   return (
-    <div className={styles.navbar}>
+    <div className={css.navbar}>
       <span>Navbar</span>
-      {user ? (
-        <button onClick={handleLogout}>Logout</button>
-      ) : (
-        null
+      {user && (
+        <Button outline onClick={handleLogout}>
+          Logout
+        </Button>
       )}
     </div>
   );

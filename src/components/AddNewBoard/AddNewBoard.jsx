@@ -1,48 +1,67 @@
 import { useState } from "react";
-import { useAddBoard } from "../../services/firestoreBoards";
-import styles from "./AddNewBoard.module.scss";
+import { useModal } from "../../contexts/ModalContext";
+import css from "./AddNewBoard.module.scss";
+import { useBoard } from "../../contexts/BoardContext";
+import Button from "../../components/common/Button/Button";
 
-const AddBoard = () => {
+const AddNewBoard = () => {
   const [boardName, setBoardName] = useState("");
   const [boardDescription, setBoardDescription] = useState("");
-  const { addBoard, isLoading, error } = useAddBoard();
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { addBoard } = useBoard();
+  const { closeModal } = useModal();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!boardName.trim()) return;
+    if (!boardName.trim()) {
+      setError("Board name is required");
+      return;
+    }
 
-    const boardId = await addBoard(boardName, boardDescription);
-    if (boardId) {
-      console.log("Board added successfully with ID:", boardId);
-      setBoardName("");
-      setBoardDescription("");
-      // Here you might want to redirect to the new board or update the UI
+    setIsLoading(true);
+    setError("");
+
+    try {
+      await addBoard(boardName, boardDescription);
+      closeModal();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className={styles.addBoard}>
-      <h2>Add New Board</h2>
+    <div className={css.addNewBoard}>
+      <h2>Create New Board</h2>
+      {error && <p className={css.error}>{error}</p>}
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={boardName}
-          onChange={(e) => setBoardName(e.target.value)}
-          placeholder="Board Name"
-          required
-        />
-        <textarea
-          value={boardDescription}
-          onChange={(e) => setBoardDescription(e.target.value)}
-          placeholder="Board Description (optional)"
-        />
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? "Adding..." : "Add Board"}
-        </button>
+        <div className={css.inputGroup}>
+          <label htmlFor="boardName">Board Name</label>
+          <input
+            type="text"
+            id="boardName"
+            value={boardName}
+            onChange={(e) => setBoardName(e.target.value)}
+            required
+          />
+        </div>
+        <div className={css.inputGroup}>
+          <label htmlFor="boardDescription">Description (optional)</label>
+          <textarea
+            id="boardDescription"
+            value={boardDescription}
+            onChange={(e) => setBoardDescription(e.target.value)}
+          />
+        </div>
+
+        <Button fullWidth type="submit" loading={isLoading}>
+          Create Board
+        </Button>
       </form>
-      {error && <p className={styles.error}>{error}</p>}
     </div>
   );
 };
 
-export default AddBoard;
+export default AddNewBoard;

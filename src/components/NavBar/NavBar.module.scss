@@ -1,10 +1,11 @@
-@import "../../styles/variables";
+@import "../../styles/variables.module";
 
 .navbar {
   margin: 0;
   height: 8vh;
   background-color: $card-background;
-  padding-left: 2rem;
+  padding: 0 2rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }

@@ -10,6 +10,7 @@ import Login from "./components/Login/Login";
 import BoardPage from "./pages/BoardPage/BoardPage";
 import { ModalProvider } from "./contexts/ModalContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { BoardProvider } from "./contexts/BoardContext";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 
 function App() {
@@ -40,9 +41,11 @@ function App() {
 
   return (
     <AuthProvider>
-      <ModalProvider>
-        <RouterProvider router={router} />
-      </ModalProvider>
+      <BoardProvider>
+        <ModalProvider>
+          <RouterProvider router={router} />
+        </ModalProvider>
+      </BoardProvider>
     </AuthProvider>
   );
 }

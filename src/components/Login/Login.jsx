@@ -4,32 +4,33 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import css from "./Login.module.scss";
 import { FaGoogle } from "react-icons/fa";
+import Button from "../../components/common/Button/Button";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { signUpOrSignIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
     try {
       await signUpOrSignIn(email, password);
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      if (error.message === 'Account exists, but password is incorrect') {
-        setError('Incorrect password for existing account. Please try again.');
-      } else if (error.code === 'auth/weak-password') {
-        setError('Password should be at least 6 characters');
-      } else if (error.code === 'auth/invalid-email') {
-        setError('Invalid email address. Please check and try again.');
+      if (error.message === "Account exists, but password is incorrect") {
+        setError("Incorrect password for existing account. Please try again.");
+      } else if (error.code === "auth/weak-password") {
+        setError("Password should be at least 6 characters");
+      } else if (error.code === "auth/invalid-email") {
+        setError("Invalid email address. Please check and try again.");
       } else {
-        setError('An error occurred. Please try again later.');
-        console.error('Authentication error:', error);
+        setError("An error occurred. Please try again later.");
+        console.error("Authentication error:", error);
       }
     } finally {
       setIsLoading(false);
@@ -37,14 +38,14 @@ const Login = () => {
   };
 
   const handleGoogleLogin = async () => {
-    setError('');
+    setError("");
     setIsLoading(true);
     try {
       await signInWithGoogle();
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      setError('Failed to log in with Google. Please try again.');
-      console.error('Google login error:', error);
+      setError("Failed to log in with Google. Please try again.");
+      console.error("Google login error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -76,16 +77,17 @@ const Login = () => {
               required
             />
           </div>
-          <button type="submit" className={css.loginButton} disabled={isLoading}>
-            {isLoading ? 'Processing...' : 'Sign In / Sign Up'}
-          </button>
+          <Button type="submit" loading={isLoading}>
+            Sign In / Sign Up
+          </Button>
         </form>
         <div className={css.divider}>
           <span>or</span>
         </div>
-        <button onClick={handleGoogleLogin} className={css.googleButton} disabled={isLoading}>
+
+        <Button fullWidth outline disabled={isLoading} onClick={handleGoogleLogin}>
           <FaGoogle /> Continue with Google
-        </button>
+        </Button>
       </div>
     </div>
   );

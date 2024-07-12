@@ -1,3 +1,5 @@
+@import "../../styles/variables.module";
+
 * {
   box-sizing: border-box;
 }
@@ -7,7 +9,7 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f0f2f5;
+  background-color: $background-color;
 }
 
 .loginForm {
@@ -20,7 +22,7 @@
 
   h2 {
     text-align: center;
-    color: #1a73e8;
+    color: $primary-color;
     margin-bottom: 1.5rem;
   }
 
