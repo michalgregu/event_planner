@@ -6,7 +6,7 @@ import { useBoard } from "../../contexts/BoardContext";
 import BoardCard from "../../components/BoardCard/BoardCard";
 import AddNewBoard from "../../components/AddNewBoard/AddNewBoard";
 import BeatLoader from "react-spinners/BeatLoader";
-import Button from "../../components/common/Button/Button";
+import Button from "../../components/Common/Button/Button";
 
 const override = {
   display: "block",

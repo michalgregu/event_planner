@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useModal } from "../../contexts/ModalContext";
 import css from "./AddNewBoard.module.scss";
 import { useBoard } from "../../contexts/BoardContext";
-import Button from "../../components/common/Button/Button";
+import Button from "../../components/Common/Button/Button";
 
 const AddNewBoard = () => {
   const [boardName, setBoardName] = useState("");

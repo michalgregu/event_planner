@@ -1,6 +1,6 @@
 import { createContext, useState, useContext } from "react";
 import ReactModal from "react-modal";
-import Button from "../components/common/Button/Button";
+import Button from "../components/Common/Button/Button";
 import PropTypes from "prop-types";
 
 const ModalContext = createContext();

@@ -1,0 +1,23 @@
+.board {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.columns {
+  display: flex;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    width: fit-content;
+  }
+}

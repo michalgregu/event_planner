@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useCallback } from "react";
+import PropTypes from "prop-types";
 import {
   collection,
   query,
@@ -36,47 +37,12 @@ export const BoardProvider = ({ children }) => {
         collection(db, "boards"),
         where("ownerId", "==", user.uid)
       );
-      const boardMembersQuery = query(
-        collection(db, "board_members"),
-        where("userId", "==", user.uid)
-      );
-
-      const [ownedBoardsSnapshot, memberBoardsSnapshot] = await Promise.all([
-        getDocs(boardsQuery),
-        getDocs(boardMembersQuery),
-      ]);
-
-      const ownedBoards = ownedBoardsSnapshot.docs.map((doc) => ({
+      const boardsSnapshot = await getDocs(boardsQuery);
+      const fetchedBoards = boardsSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-        role: "owner",
       }));
-
-      const memberBoardIds = memberBoardsSnapshot.docs.map(
-        (doc) => doc.data().boardId
-      );
-
-      let memberBoards = [];
-      if (memberBoardIds.length > 0) {
-        const memberBoardsQuery = query(
-          collection(db, "boards"),
-          where("id", "in", memberBoardIds)
-        );
-        const memberBoardsSnapshot = await getDocs(memberBoardsQuery);
-
-        memberBoards = memberBoardsSnapshot.docs.map((doc) => {
-          const boardMember = memberBoardsSnapshot.docs.find(
-            (memberDoc) => memberDoc.data().boardId === doc.id
-          );
-          return {
-            id: doc.id,
-            ...doc.data(),
-            role: boardMember.data().role,
-          };
-        });
-      }
-
-      setBoards([...ownedBoards, ...memberBoards]);
+      setBoards(fetchedBoards);
     } catch (err) {
       console.error("Error fetching boards:", err);
       setError("Failed to fetch boards. Please try again later.");
@@ -98,18 +64,10 @@ export const BoardProvider = ({ children }) => {
       };
 
       const docRef = await addDoc(collection(db, "boards"), newBoard);
-
-      await addDoc(collection(db, "board_members"), {
-        boardId: docRef.id,
-        userId: user.uid,
-        role: "owner",
-      });
-
       setBoards((prevBoards) => [
         ...prevBoards,
-        { id: docRef.id, ...newBoard, role: "owner" },
+        { id: docRef.id, ...newBoard },
       ]);
-
       return docRef.id;
     } catch (err) {
       console.error("Error adding new board:", err);
@@ -123,7 +81,11 @@ export const BoardProvider = ({ children }) => {
         ...updatedData,
         updatedAt: new Date(),
       });
-      await fetchBoards(); // Refresh the boards list
+      setBoards((prevBoards) =>
+        prevBoards.map((board) =>
+          board.id === boardId ? { ...board, ...updatedData } : board
+        )
+      );
     } catch (err) {
       console.error("Error updating board:", err);
       throw new Error("Failed to update board. Please try again.");
@@ -133,21 +95,15 @@ export const BoardProvider = ({ children }) => {
   const deleteBoard = async (boardId) => {
     try {
       await deleteDoc(doc(db, "boards", boardId));
-      // Also delete related board_members documents
-      const boardMembersQuery = query(
-        collection(db, "board_members"),
-        where("boardId", "==", boardId)
+      setBoards((prevBoards) =>
+        prevBoards.filter((board) => board.id !== boardId)
       );
-      const boardMembersSnapshot = await getDocs(boardMembersQuery);
-      boardMembersSnapshot.docs.forEach(async (doc) => {
-        await deleteDoc(doc.ref);
-      });
-      await fetchBoards(); // Refresh the boards list
     } catch (err) {
       console.error("Error deleting board:", err);
       throw new Error("Failed to delete board. Please try again.");
     }
   };
+
   const value = {
     boards,
     loading,
@@ -161,4 +117,8 @@ export const BoardProvider = ({ children }) => {
   return (
     <BoardContext.Provider value={value}>{children}</BoardContext.Provider>
   );
+};
+
+BoardProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, useContext } from "react";
+import PropTypes from "prop-types";
 import { auth, googleProvider } from "../services/firebaseConfig";
 import {
   signInWithPopup,
@@ -58,4 +59,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

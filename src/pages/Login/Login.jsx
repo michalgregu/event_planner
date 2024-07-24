@@ -4,7 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import css from "./Login.module.scss";
 import { FaGoogle } from "react-icons/fa";
-import Button from "../../components/common/Button/Button";
+import Button from "../../components/Common/Button/Button";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -85,7 +85,12 @@ const Login = () => {
           <span>or</span>
         </div>
 
-        <Button fullWidth outline disabled={isLoading} onClick={handleGoogleLogin}>
+        <Button
+          fullWidth
+          outline
+          disabled={isLoading}
+          onClick={handleGoogleLogin}
+        >
           <FaGoogle /> Continue with Google
         </Button>
       </div>
